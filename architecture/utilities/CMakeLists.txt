@@ -12,8 +12,11 @@ target_include_directories(utilities INTERFACE
 )
 
 # Included via -include to ensure it's included before any other translation unit
-target_compile_options(utilities INTERFACE
-  -include "${EIGEN3_DIR}/Eigen/src/Freestanding/all_freestanding.hpp"
-)
-
-target_compile_definitions(utilities INTERFACE EIGEN_FREESTANDING=1)
+# Only include freestanding header for RISC-V builds, not for Linux
+if(CMAKE_CROSSCOMPILING)
+  target_compile_options(utilities INTERFACE
+    -include "${EIGEN3_DIR}/Eigen/src/Freestanding/all_freestanding.hpp"
+  )
+  # Only define EIGEN_FREESTANDING for RISC-V builds, not for Linux
+  target_compile_definitions(utilities INTERFACE EIGEN_FREESTANDING=1)
+endif()
