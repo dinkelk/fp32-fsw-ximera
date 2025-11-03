@@ -5,7 +5,7 @@
  */
 
 #include "architecture/utilities/eigenSupport.h"
-#include "inertial3D.h"
+#include "inertial3DAlgorithm.h"
 
 /*! This method creates a fixed attitude reference message.  The desired orientation is
     defined within the module.
