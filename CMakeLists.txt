@@ -93,7 +93,13 @@ if(NOT IS_DIRECTORY "${EIGEN3_DIR}/Eigen")
   message(FATAL_ERROR "Eigen not found under ${EIGEN3_DIR}")
 endif()
 
+<<<<<<< HEAD
+set(algorithms "attTrackingError" "sunlineEphem" "navAggregate" "ephemNavConverter" "inertial3d")
+||||||| parent of 1d88a52 (Add C shim for inertial3D)
 set(algorithms "attTrackingError" "sunlineEphem" "navAggregate" "ephemNavConverter")
+=======
+set(algorithms "attTrackingError" "sunlineEphem" "navAggregate" "ephemNavConverter" "inertial3d")
+>>>>>>> 1d88a52 (Add C shim for inertial3D)
 foreach(algorithm_name IN LISTS algorithms)
   add_algorithm(${algorithm_name})
 endforeach()
