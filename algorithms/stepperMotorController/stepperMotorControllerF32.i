@@ -18,4 +18,4 @@
 %include "stepperMotorControllerAlgorithm.h"
 
 %include "msgPayloadDef/HingedRigidBodyMsgF32Payload.h"
-%include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
+%include "msgPayloadDef/MotorStepCommandMsgPayload.h"
