@@ -8,15 +8,11 @@
 #define F32XIMERA_STEPPER_MOTOR_CONTROLLER_ALGORITHM_H
 
 #include "msgPayloadDef/HingedRigidBodyMsgF32Payload.h"
-#include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
+#include "msgPayloadDef/MotorStepCommandMsgPayload.h"
 #include <cmath>
 #include <cstdint>
 
-/*! structure containing the stepper motor controller algorithm output */
-typedef struct {
-    MotorStepCommandMsgPayload motorStepCommandOut; /*!< Output msg for the number of commanded motor steps */
-    bool writeOutputMessage;                        /*!< indicator whether or not output message should be written */
-} StepperMotorControllerOutput;
+#include "stepperMotorControllerTypes.h"
 
 /*! @brief Stepper Motor Controller Class */
 class StepperMotorControllerAlgorithm {

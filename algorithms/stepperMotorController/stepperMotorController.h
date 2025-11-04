@@ -8,10 +8,10 @@
 #define F32XIMERA_STEPPER_MOTOR_CONTROLLER_H
 
 #include "msgPayloadDef/HingedRigidBodyMsgF32Payload.h"
+#include "msgPayloadDef/MotorStepCommandMsgPayload.h"
 #include "stepperMotorControllerAlgorithm.h"
 #include <architecture/_GeneralModuleFiles/sys_model.h>
 #include <architecture/messaging/messaging.h>
-#include <architecture/msgPayloadDef/MotorStepCommandMsgPayload.h>
 
 /*! @brief Stepper Motor Controller Class */
 class StepperMotorController : public SysModel {

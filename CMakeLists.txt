@@ -18,13 +18,19 @@ macro(add_algorithm name)
   target_include_directories(${target_name} PRIVATE ${EIGEN3_DIR})
 
   # Included via -include to ensure it's included before any other translation unit
-  target_compile_options(${target_name} PRIVATE
-    -include ${EIGEN3_DIR}/Eigen/src/Freestanding/all_freestanding.hpp
-  )
+  # Only include freestanding header for RISC-V builds, not for Linux
+  if(CMAKE_CROSSCOMPILING)
+    target_compile_options(${target_name} PRIVATE
+      -include ${EIGEN3_DIR}/Eigen/src/Freestanding/all_freestanding.hpp
+    )
+  endif()
 
   set_target_properties(${target_name} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
-  target_compile_definitions(${target_name} PRIVATE EIGEN_FREESTANDING=1)
+  # Only define EIGEN_FREESTANDING for RISC-V builds, not for Linux
+  if(CMAKE_CROSSCOMPILING)
+    target_compile_definitions(${target_name} PRIVATE EIGEN_FREESTANDING=1)
+  endif()
 
   message(STATUS "Added algorithms ${target_name}")
 endmacro()
@@ -65,16 +71,17 @@ string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_UPPER)
 message(STATUS "Build type: ${BUILD_TYPE_UPPER}")
 
 # 3) Native Linux flags (only when not cross-compiling)
+# Note: Do NOT use -ffreestanding for Linux builds - we want full standard library support
 if(NOT CMAKE_CROSSCOMPILING)
   if(BUILD_TYPE_UPPER STREQUAL "DEBUG")
     message(STATUS "Configuring native Linux Debug flags")
-    set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -O0 -g -ffreestanding" CACHE STRING "" FORCE)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -ffreestanding"  CACHE STRING "" FORCE)
+    set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -O0 -g" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g"  CACHE STRING "" FORCE)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} " CACHE STRING "" FORCE)
   else()
     message(STATUS "Configuring native Linux Release flags")
-    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   -O3 -DNDEBUG -ffreestanding" CACHE STRING "" FORCE)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG -ffreestanding" CACHE STRING "" FORCE)
+    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   -O3 -DNDEBUG" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG" CACHE STRING "" FORCE)
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} " CACHE STRING "" FORCE)
   endif()
 endif()
@@ -93,7 +100,7 @@ if(NOT IS_DIRECTORY "${EIGEN3_DIR}/Eigen")
   message(FATAL_ERROR "Eigen not found under ${EIGEN3_DIR}")
 endif()
 
-set(algorithms "attTrackingError")
+set(algorithms "attTrackingError" "sunlineEphem" "navAggregate" "ephemNavConverter" "inertial3D" "rateControl" "sunSearch" "stepperMotorController")
 foreach(algorithm_name IN LISTS algorithms)
   add_algorithm(${algorithm_name})
 endforeach()
