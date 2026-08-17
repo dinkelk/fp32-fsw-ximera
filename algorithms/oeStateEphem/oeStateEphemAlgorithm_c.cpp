@@ -17,16 +17,21 @@ OEStateEphemConfig configFromC(const double centralBodyGravitationalParameter,
     for (std::size_t i = 0; i < kMaxOeRecords; ++i) {
         const ChebyshevFitArc_c& src = fitCoefficients[i];
         ChebyshevFitArc& dst = arcs.at(i);
+        // Copied field by field on purpose. The two structs now agree on field order and on
+        // anomalyFlag's width, which makes them look castable -- but this copy is what keeps
+        // ChebyshevFitArc's layout out of the Ada ABI, and std::array<double, N> matching
+        // double[N] is universal in practice rather than guaranteed. Do not replace with a
+        // memcpy or a reinterpret_cast.
         dst.numberChebCoefficients = src.numberChebCoefficients;
         dst.ephemerisTimeMiddle = src.ephemerisTimeMiddle;
         dst.ephemerisTimeRadius = src.ephemerisTimeRadius;
+        dst.anomalyFlag = src.anomalyFlag;
         std::ranges::copy(src.radiusPeriapsisCoefficients, dst.radiusPeriapsisCoefficients.begin());
         std::ranges::copy(src.eccentricityCoefficients, dst.eccentricityCoefficients.begin());
         std::ranges::copy(src.inclinationCoefficients, dst.inclinationCoefficients.begin());
         std::ranges::copy(src.argPeriapsisCoefficients, dst.argPeriapsisCoefficients.begin());
         std::ranges::copy(src.raanCoefficients, dst.raanCoefficients.begin());
         std::ranges::copy(src.trueAnomalyCoefficients, dst.trueAnomalyCoefficients.begin());
-        dst.anomalyFlag = static_cast<AnomalyType>(src.anomalyFlag);
     }
     return OEStateEphemConfig::create(
         centralBodyGravitationalParameter, numberOfArcs, ephemerisTimeJ2000, vehicleTimeOffset, arcs);
